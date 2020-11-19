@@ -1,1 +1,2 @@
 # Kryptographie-und-Systemsicherheit---TCR-in-github
+Projekt welches innherhalb des Moduls Kryptografie und Systemsicherheit an der Hochschule Flensburg erst wird. Ziel des Projektes ist es eine TCR zu implementieren und diese mittels einer Chrome-Extension in GitHub zu integrieren. 
