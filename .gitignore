@@ -364,3 +364,6 @@ FodyWeavers.xsd
 
 # Solidity Wallet passphrase
 .env
+
+#ignore local intellij
+.idea/
