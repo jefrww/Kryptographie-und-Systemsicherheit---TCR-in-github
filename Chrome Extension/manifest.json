@@ -18,7 +18,7 @@
 
     "content_scripts": [{
         "js": ["content.js"],
-        "matches": ["https://github.com/*"]
+        "matches": ["https://github.com/*/*/pull/*"]
     }],
 
     "permissions": [
