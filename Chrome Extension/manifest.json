@@ -16,6 +16,11 @@
         "persistent": false
     },
 
+    "content_scripts": [{
+        "js": ["content.js"],
+        "matches": ["https://github.com/*"]
+    }],
+
     "permissions": [
 		"tabs", "<all_urls>",
 		"storage"
