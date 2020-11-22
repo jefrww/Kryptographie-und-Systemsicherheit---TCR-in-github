@@ -1,0 +1,7 @@
+{
+  "name": "tcr_in_github",
+  "version": "1.0.0",
+  "dependencies": {
+    "web3": "^1.3.0"
+  }
+}

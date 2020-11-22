@@ -1,26 +1,18 @@
 // SCRIPT BEING RUN AT PAGE LEVEL
 // Content injection and so on
 
-
 //'use strict';
 //import TruffleContract from 'truffle-contract'
 //import Counter from './../Solidity/build/contracts/Counter.json'
 //import web3 from './web3.min.js'
-
-
-
 //const providerChain = 'https://sokol.poa.network';
 //const web3 = new Web3(providerChain);
-
 //const counterContract = new TruffleContract(Counter);
 //counterContract.setProvider(providerChain);
 //let accounts = await web3.eth.accounts;
 //print(accounts)
-
-
 //const {contract_abi} = require('./../Solidity/build/contracts/Counter.json');
 //let contract_address = '0x4bC69694000cb26ee2a0d09b68c4B911ec778D6E';
-
 //const contract = web3.eth.Contract(contract_abi, contract_address);
 
 
@@ -32,10 +24,10 @@ if (fullURL.includes("/pull/"))
 	let web3Script = document.createElement("script");
 	let customScript = document.createElement("script");
 	web3Script.src = "https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js";
-	customScript.src = "./reaction.js"
-	let head = document.getElementsByTagName("head");
+	//customScript.src = "./web3.min.js"
+	let head = document.getElementsByTagName("body");
 	head[0].appendChild(web3Script);
-	head[0].appendChild(customScript);
+	//head[0].appendChild(customScript);
 
 	let comments = document.getElementsByClassName("comment-body");
 	let btnArr = [];
@@ -49,9 +41,25 @@ if (fullURL.includes("/pull/"))
 		comments[i].appendChild(btnArr[i]);
 	}
 }
-address = '0x4bC69694000cb26ee2a0d09b68c4B911ec778D6E';
-web3 = window.web3;
-contract = web3.eth.Contract(abi, address);
+
+let web3js;
+
+if (typeof web3 !== 'undefined') {
+	web3js = new Web3(web3.currentProvider);
+} else {
+	// set the provider you want from Web3.providers
+	web3js = new Web3(new web3.providers.HttpProvider("http://localhost:8545"));
+}
+
+//metamask
+//if(typeof window !== 'undefined' && typeof window.web3 !== 'undefined'){
+	web3js = new Web3(window.web3.currentProvider);
+	console.log("USING METAMASK");
+//}
+//else{
+//	console.log("ERROR");
+//}
+
 let abi = [
 	{
 		"inputs": [],
@@ -84,7 +92,9 @@ let abi = [
 		"type": "function"
 	}
 ];
-
+address = '0x4bC69694000cb26ee2a0d09b68c4B911ec778D6E';
+//web3js = window.web3;
+contract = web3js.eth.Contract(abi, address);
 
 function bruh ()
 {
