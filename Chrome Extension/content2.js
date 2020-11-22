@@ -21,13 +21,6 @@
 // check if on github.com and a pull request, do Background tasks
 if (fullURL.includes("/pull/"))
 {
-    let web3Script = document.createElement("script");
-    let customScript = document.createElement("script");
-    web3Script.src = "https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js";
-    //customScript.src = "./web3.min.js"
-    let head = document.getElementsByTagName("body");
-    head[0].appendChild(web3Script);
-    //head[0].appendChild(customScript);
 
     let comments = document.getElementsByClassName("comment-body");
     let btnArr = [];

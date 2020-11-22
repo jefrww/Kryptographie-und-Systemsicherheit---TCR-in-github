@@ -21,13 +21,13 @@ let fullURL = window.location.href;
 // check if on github.com and a pull request, do Background tasks
 if (fullURL.includes("/pull/"))
 {
-	let web3Script = document.createElement("script");
-	let customScript = document.createElement("script");
-	web3Script.src = "https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js";
-	//customScript.src = "./web3.min.js"
-	let head = document.getElementsByTagName("body");
-	head[0].appendChild(web3Script);
-	//head[0].appendChild(customScript);
+	// let web3Script = document.createElement("script");
+	// let customScript = document.createElement("script");
+	// web3Script.src = "https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js";
+	// //customScript.src = "./web3.min.js"
+	// let head = document.getElementsByTagName("body");
+	// head[0].appendChild(web3Script);
+	// //head[0].appendChild(customScript);
 
 	let comments = document.getElementsByClassName("comment-body");
 	let btnArr = [];
@@ -42,19 +42,26 @@ if (fullURL.includes("/pull/"))
 	}
 }
 
-let web3js;
-
-if (typeof web3 !== 'undefined') {
-	web3js = new Web3(web3.currentProvider);
-} else {
-	// set the provider you want from Web3.providers
-	web3js = new Web3(new web3.providers.HttpProvider("http://localhost:8545"));
-}
+//let web3js;
+window.addEventListener('load', () => {
+	if (typeof web3 !== 'undefined') {
+		web3 = new Web3(web3.currentProvider);
+	} else {
+		console.log('No web3? You should consider trying MetaMask!');
+		web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
+	}
+});
+// if (typeof web3 !== 'undefined') {
+// 	web3js = new Web3(web3.currentProvider);
+// } else {
+// 	// set the provider you want from Web3.providers
+// 	web3js = new Web3(new web3.providers.HttpProvider("http://localhost:8545"));
+// }
 
 //metamask
 //if(typeof window !== 'undefined' && typeof window.web3 !== 'undefined'){
-	web3js = new Web3(window.web3.currentProvider);
-	console.log("USING METAMASK");
+//	web3js = new Web3(window.web3.currentProvider);
+//	console.log("USING METAMASK");
 //}
 //else{
 //	console.log("ERROR");
@@ -94,7 +101,7 @@ let abi = [
 ];
 address = '0x4bC69694000cb26ee2a0d09b68c4B911ec778D6E';
 //web3js = window.web3;
-contract = web3js.eth.Contract(abi, address);
+contract = web3.eth.Contract(abi, address);
 
 function bruh ()
 {
