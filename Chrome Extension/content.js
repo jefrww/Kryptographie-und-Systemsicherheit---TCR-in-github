@@ -24,6 +24,7 @@
 // head[0].appendChild(web3Script);
 // //head[0].appendChild(customScript);
 
+window.addEventListener('load', () => {
 
 /* -------------------------------------------------------------------------------------------
 *                                   inject buttons on PR page
@@ -49,14 +50,17 @@ for(let i = 0; i < comments.length; i++)
 
 let web3;
 
-window.addEventListener('load', () => {
-	if (typeof web3 !== 'undefined') {
+	if (typeof web3 !== 'undefined') 
+	{
 		web3 = new Web3(web3.currentProvider);
-	} else {
+	} 
+	else 
+	{
 		console.log('No web3? You should consider trying MetaMask!');
 		web3 = new Web3(new Web3.providers.HttpProvider('https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js'));
 	}
-});
+	
+
 // if (typeof web3 !== 'undefined') {
 // 	web3js = new Web3(web3.currentProvider);
 // } else {
@@ -114,9 +118,9 @@ let abi = [
 ];
 let address = '0x4bC69694000cb26ee2a0d09b68c4B911ec778D6E';
 //web3js = window.web3;
-let contract = web3.eth.Contract(abi, address);
+let contract = new web3.eth.Contract(abi, address);
 
-
+});
 
 
 /* -------------------------------------------------------------------------------------------
