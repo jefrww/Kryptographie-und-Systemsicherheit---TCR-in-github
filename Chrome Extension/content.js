@@ -47,7 +47,8 @@ for(let i = 0; i < comments.length; i++)
 *                                   Check for injected web3
 ------------------------------------------------------------------------------------------- */
 
-//let web3js;
+let web3;
+
 window.addEventListener('load', () => {
 	if (typeof web3 !== 'undefined') {
 		web3 = new Web3(web3.currentProvider);
