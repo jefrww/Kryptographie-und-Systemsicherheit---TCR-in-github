@@ -16,22 +16,15 @@
 //const contract = web3.eth.Contract(contract_abi, contract_address);
 
 
-//let fullURL = window.location.href;
+let comments = document.getElementsByClassName("comment-body");
+let btnArr = [];
 
-// check if on github.com and a pull request, do Background tasks
-if (fullURL.includes("/pull/"))
+for(let i = 0; i < comments.length; i++)
 {
-
-    let comments = document.getElementsByClassName("comment-body");
-    let btnArr = [];
-
-    for(let i = 0; i < comments.length; i++)
-    {
-        btnArr[i] = document.createElement("BUTTON");
-        btnArr[i].innerHTML = "SECOND SCRIPT";
-        btnArr[i].classList.add("btn");
-        btnArr[i].addEventListener('click', bruh)
-        comments[i].appendChild(btnArr[i]);
-    }
+    btnArr[i] = document.createElement("BUTTON");
+    btnArr[i].innerHTML = "SECOND SCRIPT";
+    btnArr[i].classList.add("btn");
+    btnArr[i].addEventListener('click', bruh)
+    comments[i].appendChild(btnArr[i]);
 }
 
