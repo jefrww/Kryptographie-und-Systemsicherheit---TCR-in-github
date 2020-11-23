@@ -4,15 +4,9 @@
 //'use strict';
 
 window.addEventListener('load', () => {
-	/* -------------------------------------------------------------------------------------------
-*                                   Check for injected web3
-------------------------------------------------------------------------------------------- */
 	const provider = 'https://sokol.poa.network';
 	let web3 = linkWeb3(provider);
 	let contract = linkContract(web3);
-	/* -------------------------------------------------------------------------------------------
-    *                                   web3 Contract Setup
-    ------------------------------------------------------------------------------------------- */
 
 /* -------------------------------------------------------------------------------------------
 *                                   inject buttons on PR page
@@ -26,12 +20,15 @@ for(let i = 0; i < comments.length; i++)
 	btnArr[i] = document.createElement("BUTTON");
 	btnArr[i].innerHTML = "SEND TEST";
 	btnArr[i].classList.add("btn");
-	btnArr[i].addEventListener('click', bruh)
+	btnArr[i].addEventListener('click', bruh(contract));
 	comments[i].appendChild(btnArr[i]);
 }
 
 console.log("CONTRACT");
 console.log(contract);
+getCounter(contract);
+incCounter(contract);
+getCounter(contract);
 
 
 
@@ -42,6 +39,16 @@ console.log(contract);
 /* -------------------------------------------------------------------------------------------
 *                                   Functions
 ------------------------------------------------------------------------------------------- */
+async function getCounter(contract)
+{
+	let counter = await contract.methods.getCounter().call();
+	console.log("COUNTER");
+	console.log(counter);
+}
+async function incCounter(contract)
+{
+	contract.methods.increment().send();
+}
 function linkWeb3(provider)
 {
 	let createdWeb3;
@@ -93,29 +100,22 @@ function linkContract(web3)
 	let address = '0x4bC69694000cb26ee2a0d09b68c4B911ec778D6E';
 	return new web3.eth.Contract(abi, address);
 }
-function bruh ()
+function bruh (contract)
 {
 	console.log("HJEEEELP");
+	getCounter(contract);
 }
 
-function printCounter(){
-	contract.methods.getCounter().call().then(res=>{
-		console.log(res);
-	}).catch(err =>console.log(err));
-}
 function incrementCounter()
 {
 	contract.methods.increment().estimateGas({ from: public_address }).then(gas => {
-
 		const tx = {
 			from: public_address,
 			to: contract_address,
 			gas: gas,
 			data: contract.methods.increment().encodeABI()
 		};
-
 		const signPromise = web3.eth.accounts.signTransaction(tx, private_key);
-
 		signPromise.then((signedTx) => {
 			const sentTx = web3.eth.sendSignedTransaction(signedTx.raw || signedTx.rawTransaction);
 			sentTx.on("receipt", receipt => {
