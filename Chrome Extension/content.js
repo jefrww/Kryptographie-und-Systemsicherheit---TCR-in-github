@@ -4,13 +4,20 @@
 //'use strict';
 
 window.addEventListener('load', () => {
+
 	const provider = 'https://sokol.poa.network';
 	let web3 = linkWeb3(provider);
 	let contract = linkContract(web3);
+	let privateKey = '9a3f1ef33a7d9bfd6fc26d11df4f36c1bea498c6c8c1bfb8bf42ffbfb9a62d72';
+	let privateAddress = '0x58D8830c2e428912cad9073D517c3DE53316D495';
+	//window.ethereum.enable();
+	web3.eth.personal.unlockAccount("0x58D8830c2e428912cad9073D517c3DE53316D495", 'null', 0);
+	//web3.eth.enable();
+	let account = web3.eth.accounts.privateKeyToAccount(privateKey);
 
-/* -------------------------------------------------------------------------------------------
-*                                   inject buttons on PR page
-------------------------------------------------------------------------------------------- */
+	/* -------------------------------------------------------------------------------------------
+    *                                   inject buttons on PR page
+    ------------------------------------------------------------------------------------------- */
 
 let comments = document.getElementsByClassName("comment-body");
 let btnArr = [];
@@ -47,7 +54,13 @@ async function getCounter(contract)
 }
 async function incCounter(contract)
 {
-	contract.methods.increment().send();
+	contract.methods.increment().send({from: "0x58D8830c2e428912cad9073D517c3DE53316D495"}, function(err, res){
+		if(err){
+			console.log("ERROR DURING INC", err);
+			return
+		}
+		console.log("SUCCESS WITH HASH: " + res);
+	});
 }
 function linkWeb3(provider)
 {
@@ -127,6 +140,4 @@ function incrementCounter()
 			});
 		}).catch(error => console.log(error));
 	}).catch(error => console.log(error));
-
-	printCounter();
 }
