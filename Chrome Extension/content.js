@@ -8,8 +8,6 @@ window.addEventListener('load', () => {
 	const provider = 'https://sokol.poa.network';
 	let web3 = linkWeb3(provider);
 	let contract = linkContract(web3);
-	//let privateKey = '9a3f1ef33a7d9bfd6fc26d11df4f36c1bea498c6c8c1bfb8bf42ffbfb9a62d72';
-	//let privateAddress = '0x58D8830c2e428912cad9073D517c3DE53316D495';
 	let wallet = web3.eth.accounts.wallet.add({
 		privateKey: '9a3f1ef33a7d9bfd6fc26d11df4f36c1bea498c6c8c1bfb8bf42ffbfb9a62d72',
 		address: '0x58D8830c2e428912cad9073D517c3DE53316D495'
@@ -30,16 +28,14 @@ for(let i = 0; i < comments.length; i++)
 	btnArr[i].classList.add("btn");
 	btnArr[i].addEventListener('click', bruh2(contract, wallet));
 
-	let curCount = getCounter(contract);
-
-	console.log("CUR COUNT");
-	console.log(curCount);
-	counterArr[i] = document.createElement("DIV");
-	counterArr[i].innerHTML = "Counter Count: " + curCount;
-
-
+	getCounter(contract).then( function (result){
+		console.log('PRINTING IN THEN: ' + result);
+		counterArr[i] = document.createElement("DIV");
+		counterArr[i].innerHTML = "Counter Count: " + result;
+		comments[i].appendChild(counterArr[i]);
+	});
 	comments[i].appendChild(btnArr[i]);
-	comments[i].appendChild(counterArr[i]);
+
 }
 
 console.log("CONTRACT");
