@@ -8,37 +8,44 @@ window.addEventListener('load', () => {
 	const provider = 'https://sokol.poa.network';
 	let web3 = linkWeb3(provider);
 	let contract = linkContract(web3);
-	let privateKey = '9a3f1ef33a7d9bfd6fc26d11df4f36c1bea498c6c8c1bfb8bf42ffbfb9a62d72';
-	let privateAddress = '0x58D8830c2e428912cad9073D517c3DE53316D495';
-	//window.ethereum.enable();
-	web3.eth.personal.unlockAccount("0x58D8830c2e428912cad9073D517c3DE53316D495", 'null', 0);
-	//web3.eth.enable();
-	let account = web3.eth.accounts.privateKeyToAccount(privateKey);
-
+	//let privateKey = '9a3f1ef33a7d9bfd6fc26d11df4f36c1bea498c6c8c1bfb8bf42ffbfb9a62d72';
+	//let privateAddress = '0x58D8830c2e428912cad9073D517c3DE53316D495';
+	let wallet = web3.eth.accounts.wallet.add({
+		privateKey: '9a3f1ef33a7d9bfd6fc26d11df4f36c1bea498c6c8c1bfb8bf42ffbfb9a62d72',
+		address: '0x58D8830c2e428912cad9073D517c3DE53316D495'
+	});
+	console.log(wallet);
 	/* -------------------------------------------------------------------------------------------
     *                                   inject buttons on PR page
     ------------------------------------------------------------------------------------------- */
 
 let comments = document.getElementsByClassName("comment-body");
 let btnArr = [];
+let counterArr = [];
 
 for(let i = 0; i < comments.length; i++)
 {
 	btnArr[i] = document.createElement("BUTTON");
 	btnArr[i].innerHTML = "SEND TEST";
 	btnArr[i].classList.add("btn");
-	btnArr[i].addEventListener('click', bruh(contract));
+	btnArr[i].addEventListener('click', bruh2(contract, wallet));
+
+	let curCount = getCounter(contract);
+
+	console.log("CUR COUNT");
+	console.log(curCount);
+	counterArr[i] = document.createElement("DIV");
+	counterArr[i].innerHTML = "Counter Count: " + curCount;
+
+
 	comments[i].appendChild(btnArr[i]);
+	comments[i].appendChild(counterArr[i]);
 }
 
 console.log("CONTRACT");
 console.log(contract);
 getCounter(contract);
-incCounter(contract);
-getCounter(contract);
-
-
-
+//incCounter(contract,wallet);
 
 });
 
@@ -46,15 +53,21 @@ getCounter(contract);
 /* -------------------------------------------------------------------------------------------
 *                                   Functions
 ------------------------------------------------------------------------------------------- */
+async function getAccs(web3)
+{
+	return await web3.eth.getAccounts();
+}
 async function getCounter(contract)
 {
 	let counter = await contract.methods.getCounter().call();
 	console.log("COUNTER");
 	console.log(counter);
+	return counter;
 }
-async function incCounter(contract)
+async function incCounter(contract, wallet)
 {
-	contract.methods.increment().send({from: "0x58D8830c2e428912cad9073D517c3DE53316D495"}, function(err, res){
+	let gas = await contract.methods.increment().estimateGas({from: contract.address})
+	contract.methods.increment().send({from: wallet.address, gas: gas}, function(err, res){
 		if(err){
 			console.log("ERROR DURING INC", err);
 			return
@@ -62,6 +75,11 @@ async function incCounter(contract)
 		console.log("SUCCESS WITH HASH: " + res);
 	});
 }
+async function estimateGas(contract)
+{
+
+}
+
 function linkWeb3(provider)
 {
 	let createdWeb3;
@@ -117,27 +135,9 @@ function bruh (contract)
 {
 	console.log("HJEEEELP");
 	getCounter(contract);
+	incCounter(contract);
 }
-
-function incrementCounter()
+function bruh2 (contract, wallet)
 {
-	contract.methods.increment().estimateGas({ from: public_address }).then(gas => {
-		const tx = {
-			from: public_address,
-			to: contract_address,
-			gas: gas,
-			data: contract.methods.increment().encodeABI()
-		};
-		const signPromise = web3.eth.accounts.signTransaction(tx, private_key);
-		signPromise.then((signedTx) => {
-			const sentTx = web3.eth.sendSignedTransaction(signedTx.raw || signedTx.rawTransaction);
-			sentTx.on("receipt", receipt => {
-				console.log(receipt);
-				getCounter()
-			});
-			sentTx.on("error", err => {
-				console.log(err);
-			});
-		}).catch(error => console.log(error));
-	}).catch(error => console.log(error));
+	incCounter(contract, wallet);
 }
