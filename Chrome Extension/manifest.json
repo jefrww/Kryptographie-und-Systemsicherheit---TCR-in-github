@@ -1,0 +1,28 @@
+{
+    "name": "TCR for Github Voting",
+    "version": "1.0",
+    "description": "Voting on Github PRs through TCR.",
+    "manifest_version": 2,
+
+    "options_page": "options.html",
+
+    "browser_action": {
+		//"default_icon": "icon64.png",
+		"default_popup": "popup.html"
+	},
+
+	"background": {
+        "scripts": ["background.js"],
+        "persistent": false
+    },
+
+    "content_scripts": [{
+      "matches": ["https://github.com/*/*/pull/*"],
+      "js": ["web3.min.js", "content.js" ]
+    }],
+
+    "permissions": [
+		"tabs", "<all_urls>",
+		"storage"
+	]
+}
