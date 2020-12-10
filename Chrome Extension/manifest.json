@@ -18,11 +18,18 @@
 
     "content_scripts": [{
       "matches": ["https://github.com/*/*/pull/*"],
-      "js": ["web3.min.js", "content.js" ]
+      "js": ["web3.min.js", "octokitRest.js", "content.js" ]
     }],
 
     "permissions": [
-		"tabs", "<all_urls>",
-		"storage"
-	]
+		"<all_urls>",
+        "identity", "tabs", "webNavigation", "activeTab", "storage", "http://*/*", "declarativeContent",
+        "https://github.com/login/oauth/authorize"
+	],
+  "oauth2": {
+    "client_id": "232924171823-5b8iaqm7q3ku96ggol1sutgdk88mdi1o.apps.googleusercontent.com",
+    "scopes":["https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/contacts.readonly"]
+  },
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnt+8lvNtVXizzP9j1YbLa1gyLoLHwjpZ8D0cNvJNTjBNHbWqumuxrnlpVWv54MWwpt5iNEkm2LB2wU3RHvs4w3mQbHrONkYdFGpDLHyBHIJzHTQE2m3M4c132U+hcGfkQPsnj1DjDfqy43uhoSqLTrP5YXDNBxABAgLjmy6gNiuaQhgBuXVjv6NIg+Up0l22zX/dhr54K8yc6JTupnetSXayeNejoUXl+tAME+aJaN50+BqekY6RHgsWQn/SUIAtysES7X7yzYMqCdbAKQ3VQLb0jr5XnK7Mb48Nd4oNXYX03uyQyuvetVBOH3sTDQ5nrTL4wyAGFU6JTzF9Mb019QIDAQAB"
+
 }

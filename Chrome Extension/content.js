@@ -1,5 +1,8 @@
 // SCRIPT BEING RUN AT PAGE LEVEL
 // Content injection and so on
+const client_id = "17dd16773831937c851a";
+//const redirectUri = chrome.identity.getRedirectURL("github");
+const client_secret = "286464155f7b4ad72bbae97b281cd2e1d82847a5";
 
 window.addEventListener('load', () => {
     const provider = 'https://sokol.poa.network';
@@ -13,6 +16,22 @@ window.addEventListener('load', () => {
     console.log(contract);
 
     let comments = document.getElementsByClassName("timeline-comment-group");
+    let submitDiv = document.getElementById("partial-new-comment-form-actions");
+    let submitWithStake = document.createElement('button');
+    submitWithStake.innerHTML = "Comment with stake";
+    submitDiv.appendChild(submitWithStake);
+
+    function printRepoCount() {
+        console.log(this.responseText);
+        var responseObj = JSON.parse(this.responseText);
+        console.log(responseObj.name + " has " + responseObj.public_repos + " public repositories!");
+    }
+    submitWithStake.addEventListener('click', function (){
+        event.preventDefault()
+        chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
+            console.log(response.farewell);
+        });
+    });
 
     for (let i = 0; i < comments.length; i++) {
         let commentId = comments[i].id;
@@ -46,7 +65,7 @@ window.addEventListener('load', () => {
             let downCount = document.createElement("DIV");
             downCount.innerHTML = "▼ " + result;
             votingDiv.appendChild(downCount);
-        })
+        });
     }
 });
 /* -------------------------------------------------------------------------------------------
@@ -232,4 +251,27 @@ async function downvote(contract, wallet, id) {
         }
         console.log("DOWNVOTED WITH HASH: " + res);
     });
+}
+
+/* -------------------------------------------------------------------------------------------
+*                                   USING GITHUB API
+------------------------------------------------------------------------------------------- */
+function printRepoCount() {
+    console.log(this.responseText);
+    let token_URL = new URL("https://github.com/?" + this.responseText);
+    let token = token_URL.searchParams.get("access_token");
+    console.log(token);
+
+    let commentRequest = new XMLHttpRequest();
+    commentRequest.onload = printResponse;
+    commentRequest.open('post', 'https://api.github.com/repos/jefrww/TextRepoForTCRextension/issues/1/comments');
+    //commentRequest.setRequestHeader('body', );
+
+    commentRequest.setRequestHeader('Authorization', 'Bearer ' + token);
+    commentRequest.send('{"body": "THIS IS A REAL API COMMENT"}');
+}
+
+function printResponse()
+{
+    console.log(this.responseText);
 }
