@@ -20,21 +20,16 @@ window.addEventListener('load', () => {
     let submitWithStake = document.createElement('button');
     submitWithStake.innerHTML = "Comment with stake";
     submitDiv.appendChild(submitWithStake);
-
-    function printRepoCount() {
-        console.log(this.responseText);
-        var responseObj = JSON.parse(this.responseText);
-        console.log(responseObj.name + " has " + responseObj.public_repos + " public repositories!");
-    }
+    
     submitWithStake.addEventListener('click', function (){
-        event.preventDefault()
-        chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
-            console.log(response.farewell);
+        event.preventDefault();
+        chrome.runtime.sendMessage({postComment: true}, function(response) {
+            console.log(response);
         });
     });
 
     for (let i = 0; i < comments.length; i++) {
-        let commentId = comments[i].id;
+        let commentId = comments[i].id.replace(/\D/g,'');
         let votingDiv = document.createElement('div');
         votingDiv.innerHTML = "Voting Div";
         comments[i].getElementsByClassName("comment-body")[0].appendChild(votingDiv);
@@ -65,6 +60,12 @@ window.addEventListener('load', () => {
             let downCount = document.createElement("DIV");
             downCount.innerHTML = "▼ " + result;
             votingDiv.appendChild(downCount);
+        });
+        getOwner(contract, commentId).then(function (result){
+            console.log(result);
+           let ownerName = document.createElement("DIV");
+            ownerName.innerHTML = "Owner: " + result;
+           votingDiv.appendChild(ownerName);
         });
     }
 });
@@ -119,6 +120,11 @@ function linkContract(web3) {
                     "internalType": "uint256",
                     "name": "down",
                     "type": "uint256"
+                },
+                {
+                    "internalType": "address",
+                    "name": "creator",
+                    "type": "address"
                 }
             ],
             "payable": false,
@@ -171,6 +177,21 @@ function linkContract(web3) {
             "type": "function"
         },
         {
+            "constant": false,
+            "inputs": [
+                {
+                    "internalType": "string",
+                    "name": "commentId",
+                    "type": "string"
+                }
+            ],
+            "name": "createCommentWithOwner",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
             "constant": true,
             "inputs": [
                 {
@@ -211,9 +232,30 @@ function linkContract(web3) {
             "payable": false,
             "stateMutability": "view",
             "type": "function"
+        },
+        {
+            "constant": true,
+            "inputs": [
+                {
+                    "internalType": "string",
+                    "name": "commentId",
+                    "type": "string"
+                }
+            ],
+            "name": "getCommentOwner",
+            "outputs": [
+                {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
         }
     ];
-    let address = '0xB497a33810EF3F278BD20bba988d4b5EF325c795';
+    let address = '0x2de9449351faAA2B5C2025c0105bfD84EDd514c9';
     return new web3.eth.Contract(abi, address);
 }
 async function getAccs(web3) {
@@ -225,6 +267,9 @@ async function getAccs(web3) {
 
 async function getUpvotes(contract, id) {
     return await contract.methods.getUpvotes(id).call();
+}
+async function getOwner(contract, id) {
+    return await contract.methods.getCommentOwner(id).call();
 }
 
 async function getDownvotes(contract, id) {
@@ -252,26 +297,16 @@ async function downvote(contract, wallet, id) {
         console.log("DOWNVOTED WITH HASH: " + res);
     });
 }
-
+async function createCommentWithOwner(){
+    let gas = await contract.methods.upvote(id).estimateGas({from: contract.address})
+    contract.methods.upvote(id).send({from: wallet.address, gas: gas}, function (err, res) {
+        if (err) {
+            console.log("ERROR DURING UPVOTE", err);
+            return
+        }
+        console.log("UPVOTED WITH HASH: " + res);
+    });
+}
 /* -------------------------------------------------------------------------------------------
 *                                   USING GITHUB API
 ------------------------------------------------------------------------------------------- */
-function printRepoCount() {
-    console.log(this.responseText);
-    let token_URL = new URL("https://github.com/?" + this.responseText);
-    let token = token_URL.searchParams.get("access_token");
-    console.log(token);
-
-    let commentRequest = new XMLHttpRequest();
-    commentRequest.onload = printResponse;
-    commentRequest.open('post', 'https://api.github.com/repos/jefrww/TextRepoForTCRextension/issues/1/comments');
-    //commentRequest.setRequestHeader('body', );
-
-    commentRequest.setRequestHeader('Authorization', 'Bearer ' + token);
-    commentRequest.send('{"body": "THIS IS A REAL API COMMENT"}');
-}
-
-function printResponse()
-{
-    console.log(this.responseText);
-}
