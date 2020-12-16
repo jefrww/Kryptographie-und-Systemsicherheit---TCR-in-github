@@ -23,7 +23,17 @@ window.addEventListener('load', () => {
     
     submitWithStake.addEventListener('click', function (){
         event.preventDefault();
-        chrome.runtime.sendMessage({postComment: true}, function(response) {
+        let commentText = document.getElementById('new_comment_field').value;
+        let url = window.location.href.split('/');
+        let repo = url[url.length -3];
+        let issueNum = url[url.length -1];
+        let owner = url[url.length -4];
+        let randoJSON = JSON.parse('{"firstName":"John", "lastName":"Doe"}');
+        let commentInfo = '{"repo":"'+repo+'", "issueNum":"'+issueNum+'", "comment":"'+jsonEscape(commentText)+'", "owner":"'+owner+'"}';
+        console.log('JSON: ' + randoJSON.firstName + ' ' + randoJSON.lastName);
+        console.log('REPO: ' + repo);
+        console.log('ISSUE-NUM: ' + issueNum);
+        chrome.runtime.sendMessage({commentInfo: commentInfo}, function(response) {
             console.log(response);
         });
     });
@@ -310,3 +320,6 @@ async function createCommentWithOwner(){
 /* -------------------------------------------------------------------------------------------
 *                                   USING GITHUB API
 ------------------------------------------------------------------------------------------- */
+function jsonEscape(str)  {
+    return str.replace(/\n/g, "\\\\n").replace(/\r/g, "\\\\r").replace(/\t/g, "\\\\t");
+}
