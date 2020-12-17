@@ -28,18 +28,18 @@ window.addEventListener('load', () => {
         let repo = url[url.length -3];
         let issueNum = url[url.length -1];
         let owner = url[url.length -4];
-        let randoJSON = JSON.parse('{"firstName":"John", "lastName":"Doe"}');
         let commentInfo = '{"repo":"'+repo+'", "issueNum":"'+issueNum+'", "comment":"'+jsonEscape(commentText)+'", "owner":"'+owner+'"}';
-        console.log('JSON: ' + randoJSON.firstName + ' ' + randoJSON.lastName);
         console.log('REPO: ' + repo);
         console.log('ISSUE-NUM: ' + issueNum);
         chrome.runtime.sendMessage({commentInfo: commentInfo}, function(response) {
-            console.log(response);
+            console.log(String(response));
+            createComment(contract, wallet, String(response));
         });
     });
 
     for (let i = 0; i < comments.length; i++) {
         let commentId = comments[i].id.replace(/\D/g,'');
+        console.log(commentId);
         let votingDiv = document.createElement('div');
         votingDiv.innerHTML = "Voting Div";
         comments[i].getElementsByClassName("comment-body")[0].appendChild(votingDiv);
@@ -71,7 +71,7 @@ window.addEventListener('load', () => {
             downCount.innerHTML = "▼ " + result;
             votingDiv.appendChild(downCount);
         });
-        getOwner(contract, commentId).then(function (result){
+        getCommentOwner(contract, commentId).then(function (result){
             console.log(result);
            let ownerName = document.createElement("DIV");
             ownerName.innerHTML = "Owner: " + result;
@@ -123,17 +123,17 @@ function linkContract(web3) {
                 },
                 {
                     "internalType": "uint256",
-                    "name": "up",
+                    "name": "poolUp",
                     "type": "uint256"
                 },
                 {
                     "internalType": "uint256",
-                    "name": "down",
+                    "name": "poolDown",
                     "type": "uint256"
                 },
                 {
-                    "internalType": "address",
-                    "name": "creator",
+                    "internalType": "address payable",
+                    "name": "commentCreator",
                     "type": "address"
                 }
             ],
@@ -181,21 +181,6 @@ function linkContract(web3) {
                 }
             ],
             "name": "createComment",
-            "outputs": [],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "constant": false,
-            "inputs": [
-                {
-                    "internalType": "string",
-                    "name": "commentId",
-                    "type": "string"
-                }
-            ],
-            "name": "createCommentWithOwner",
             "outputs": [],
             "payable": false,
             "stateMutability": "nonpayable",
@@ -255,9 +240,9 @@ function linkContract(web3) {
             "name": "getCommentOwner",
             "outputs": [
                 {
-                    "internalType": "string",
+                    "internalType": "address",
                     "name": "",
-                    "type": "string"
+                    "type": "address"
                 }
             ],
             "payable": false,
@@ -265,7 +250,7 @@ function linkContract(web3) {
             "type": "function"
         }
     ];
-    let address = '0x2de9449351faAA2B5C2025c0105bfD84EDd514c9';
+    let address = '0x019329c0d5c3cB72982c7CBC0827fB83f55E1E99';
     return new web3.eth.Contract(abi, address);
 }
 async function getAccs(web3) {
@@ -278,7 +263,7 @@ async function getAccs(web3) {
 async function getUpvotes(contract, id) {
     return await contract.methods.getUpvotes(id).call();
 }
-async function getOwner(contract, id) {
+async function getCommentOwner(contract, id) {
     return await contract.methods.getCommentOwner(id).call();
 }
 
@@ -307,14 +292,14 @@ async function downvote(contract, wallet, id) {
         console.log("DOWNVOTED WITH HASH: " + res);
     });
 }
-async function createCommentWithOwner(){
-    let gas = await contract.methods.upvote(id).estimateGas({from: contract.address})
-    contract.methods.upvote(id).send({from: wallet.address, gas: gas}, function (err, res) {
+async function createComment(contract, wallet, id){
+    let gas = await contract.methods.createComment(id).estimateGas({from: contract.address})
+    contract.methods.createComment(id).send({from: wallet.address, gas: 12000000}, function (err, res) {
         if (err) {
             console.log("ERROR DURING UPVOTE", err);
             return
         }
-        console.log("UPVOTED WITH HASH: " + res);
+        console.log("CREATED WITH HASH: " + res);
     });
 }
 /* -------------------------------------------------------------------------------------------

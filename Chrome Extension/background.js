@@ -27,7 +27,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 function authenticate() {
     return new Promise((resolve, reject) => {
         chrome.identity.launchWebAuthFlow({
-            'url': 'https://github.com/login/oauth/authorize?client_id=' + client_id + "&scope=repo",
+            'url': 'https://github.com/login/oauth/authorize?client_id=' + client_id + "&scope=repo" + "&state=secret",
             'interactive': true
         }, async function (redirect_url) {
             console.log(redirect_url);
@@ -37,7 +37,7 @@ function authenticate() {
             console.log("Chain: Service-Code: " + code);
 
             let data = await readResponse(
-                'https://github.com/login/oauth/access_token?client_id=' + client_id + '&client_secret=' + client_secret + '&code=' + code,
+                'https://github.com/login/oauth/access_token?client_id=' + client_id + '&client_secret=' + client_secret + '&code=' + code + "&state=secret",
                 'POST',
                 new Headers({
                     'User-agent': 'Mozilla/4.0 Custom User Agent'
@@ -97,10 +97,6 @@ function postComment(responseText) {
         }),
         body
     );
-
-    //commentRequest.onload = parseCommentResponse;
-    //commentRequest.setRequestHeader('Authorization', 'Bearer ' + token);
-    //commentRequest.send('{"body": "Test if still working"}');
 }
 
 function parseCommentResponse(responseText) {
