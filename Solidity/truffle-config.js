@@ -35,7 +35,7 @@ module.exports = {
             "https://sokol.poa.network")
       },
       network_id: 77,
-      gas: 0x000000fffff,
+      gas: 10009953,
       gasPrice: 1000000000
     },
     development: {

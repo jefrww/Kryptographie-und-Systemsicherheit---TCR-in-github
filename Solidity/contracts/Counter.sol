@@ -4,47 +4,47 @@ contract Counter {
   mapping(string => Comment) public comments;
   enum Stage{INIT, OPEN, CLOSED}
 
+
   struct Comment{
     bool exists;
     Stage stage;
-    uint up;
-    uint down;
-    address creator;
+    uint poolUp;
+    uint poolDown;
+    address payable commentCreator;
+    mapping(address => uint) up;
+    mapping(address => uint) down;
   }
 
   constructor() public {
   }
 
-
   function upvote(string memory commentId) public {
-    if(!comments[commentId].exists) createComment(commentId);
-    comments[commentId].up++;
+    if(!comments[commentId].exists) return;
+    comments[commentId].up[msg.sender] = 1;
+    comments[commentId].poolUp += 1;
   }
   function downvote(string memory commentId) public {
-    if(!comments[commentId].exists) createComment(commentId);
-    comments[commentId].down++;
+    if(!comments[commentId].exists) return;
+    comments[commentId].down[msg.sender] = 1;
+    comments[commentId].poolDown += 1;
   }
   function createComment(string memory commentId) public {
     if(comments[commentId].exists) return;
-    comments[commentId] = Comment(true, Stage.INIT, 0, 0, address (this));
-  }
-  function createCommentWithOwner(string memory commentId) public {
-    if(comments[commentId].exists) return;
-    comments[commentId] = Comment(true, Stage.INIT, 0, 0, msg.sender);
-
+    address payable fromAddress = address(uint160(msg.sender));
+    comments[commentId] = Comment(true, Stage.INIT, 0, 0, fromAddress);
   }
 
   function getUpvotes(string memory commentId) public view returns (uint) {
     if(!comments[commentId].exists) return 12345;
-    return comments[commentId].up;
+    return comments[commentId].poolUp;
   }
   function getDownvotes(string memory commentId) public view returns (uint) {
     if(!comments[commentId].exists) return 12345;
-    return comments[commentId].down;
+    return comments[commentId].poolDown;
   }
-  function getCommentOwner(string memory commentId) public view returns (string memory){
-    if(!comments[commentId].exists) return "NO OWNER";
-    return string(abi.encodePacked(comments[commentId].creator));
+  function getCommentOwner(string memory commentId) public view returns (address){
+    if(!comments[commentId].exists) return address (this);
+    return comments[commentId].commentCreator;
   }
 
 }
