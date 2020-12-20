@@ -3,15 +3,18 @@
   <head>
     <style>
       button {
-        height: 30px;
-        width: 30px;
+        height: auto;
+        width: auto;
         outline: none;
       }
     </style>
   </head>
   <body>
-	<input type="text" placeholder="wallet adress here"></input>
-    <button id="saveAdress">Save</button>
-    <script src="popup.js"></script>
+  
+    <input id="wallet_adress" type="text" placeholder="wallet adress here"></input>
+    <input id="wallet_private_key" type="text" placeholder="wallet private key"></input>
+    <button id="wallet_saveButton">Save</button>
+  
+  <script src="popup.js"></script>
   </body>
 </html>

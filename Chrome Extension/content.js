@@ -5,6 +5,33 @@ const client_id = "17dd16773831937c851a";
 const client_secret = "286464155f7b4ad72bbae97b281cd2e1d82847a5";
 
 window.addEventListener('load', () => {
+    // Get Extension Settings
+    let wallet_adress;
+    let wallet_private_key;
+
+    // First locally
+    chrome.storage.local.get(['wallet_adress'], function(result) {
+        wallet_adress = result.wallet_adress;
+        console.log('[local] Wallet adress currently is ' + result.wallet_adress);
+    });
+
+    chrome.storage.local.get(['wallet_private_key'], function(result) {
+        wallet_private_key = result.wallet_private_key;
+        console.log('[local] Wallet private key currently is ' + result.wallet_private_key);
+    });
+
+    // For Chrome Sync override what was set with locally, when Chrome Sync is enabled.
+    chrome.storage.sync.get(['wallet_adress'], function(result) {
+        wallet_adress = result.wallet_adress;
+        console.log('[SYNC] Wallet adress currently is ' + result.wallet_adress);
+    });
+
+    chrome.storage.sync.get(['wallet_private_key'], function(result) {
+        wallet_private_key = result.wallet_private_key;
+        console.log('[SYNC] Wallet private key currently is ' + result.wallet_private_key);
+    });
+
+
     const provider = 'https://sokol.poa.network';
     let web3 = linkWeb3(provider);
     let contract = linkContract(web3);
