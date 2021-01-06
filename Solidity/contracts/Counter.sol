@@ -2,11 +2,13 @@ pragma solidity 0.5.16;
 
 contract Counter {
   mapping(string => Comment) public comments;
+  uint256 initDuration = 24*60*60*7;
   enum Stage{INIT, OPEN, CLOSED}
 
 
   struct Comment{
     bool exists;
+    uint256 creationDate;
     Stage stage;
     uint poolUp;
     uint poolDown;
@@ -31,7 +33,7 @@ contract Counter {
   function createComment(string memory commentId) public {
     if(comments[commentId].exists) return;
     address payable fromAddress = address(uint160(msg.sender));
-    comments[commentId] = Comment(true, Stage.INIT, 0, 0, fromAddress);
+    comments[commentId] = Comment(true, block.timestamp, Stage.INIT, 0, 0, fromAddress);
   }
 
   function getUpvotes(string memory commentId) public view returns (uint) {
@@ -46,5 +48,12 @@ contract Counter {
     if(!comments[commentId].exists) return address (this);
     return comments[commentId].commentCreator;
   }
-
+  function getCreationDate(string memory commentId) public view returns (uint256){
+    if(!comments[commentId].exists) return 0;
+    return comments[commentId].creationDate;
+  }
+  function getRemainingTime(string memory commentId) public view returns (uint256){
+    if(!comments[commentId].exists) return 0;
+    return comments[commentId].creationDate+initDuration-now;
+  }
 }
