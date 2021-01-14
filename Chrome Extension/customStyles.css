@@ -1,0 +1,22 @@
+.vote_btn{
+    background: none;
+    color: inherit;
+    border: none;
+    padding: 5px;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+    margin-right: 10px;
+}
+.vote_btn:hover{
+    color: #238636;
+}
+.upvote_btn::after{
+    content: " ▲";
+}
+.downvote_btn::after{
+    content: " ▼";
+}
+.box_padding{
+    padding: 10px;
+}

@@ -18,7 +18,8 @@
 
     "content_scripts": [{
       "matches": ["https://github.com/*/*/pull/*"],
-      "js": ["web3.min.js", "octokitRest.js", "content.js" ]
+      "js": ["web3.min.js", "octokitRest.js", "content.js" ],
+      "css": ["customStyles.css"]
     }],
 
     "permissions": [

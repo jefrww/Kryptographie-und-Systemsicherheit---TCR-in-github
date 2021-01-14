@@ -32,26 +32,34 @@ contract Comment {
     }
     function upvote() public payable{
         require(!votes[msg.sender].exists, "You already voted");
+        require(stage == Stage.INIT, "Voting in wrong stage");
         votesLUT.push(msg.sender);
         votes[msg.sender] = Vote(true, Favor.UP, msg.value);
         totalUp += msg.value;
     }
     function downvote() public payable{
         require(!votes[msg.sender].exists, "You already voted");
+        require(stage == Stage.INIT, "Voting in wrong stage");
         votesLUT.push(msg.sender);
         votes[msg.sender] = Vote(true, Favor.DOWN, msg.value);
         totalDown += msg.value;
     }
     function payoutSingleRecipient() public{
-        uint fraction;
+        require(stage == Stage.INIT, "Voting in wrong stage");
         if(totalUp > totalDown){
-            fraction = (totalDown+totalUp)/totalUp;
+            if(votes[votesLUT[votesLUT.length-1]].decision == Favor.UP){
+                address(uint160(votesLUT[votesLUT.length-1])).transfer(votes[votesLUT[votesLUT.length-1]].stake * (totalDown+totalUp)/totalUp);
+            }
         }
         else{
-            fraction = (totalDown+totalUp)/totalDown;
+            if(votes[votesLUT[votesLUT.length-1]].decision == Favor.DOWN){
+                address(uint160(votesLUT[votesLUT.length-1])).transfer(votes[votesLUT[votesLUT.length-1]].stake * (totalDown+totalUp)/totalDown);
+            }
         }
-        address(uint160(votesLUT[votesLUT.length-1])).transfer(votes[votesLUT[votesLUT.length-1]].stake * fraction);
         votesLUT.length--;
+        if(votesLUT.length == 0){
+            stage = Stage.CLOSED;
+        }
     }
     function getRemaingRecipientCount() public view returns(uint) {
         return votesLUT.length;
@@ -71,7 +79,13 @@ contract Comment {
     function getCreationDate() external view returns (uint256){
         return creationDate;
     }
-    function getRemainingTime() external view returns (uint256){
+    function getRemainingTime() external returns (uint256){
+        if(creationDate+initDuration-now <= 0){
+            stage = Stage.OPEN;
+        }
         return creationDate+initDuration-now;
+    }
+    function hasVoted() external returns (Favor){
+        return votes[msg.sender].decision;
     }
 }
