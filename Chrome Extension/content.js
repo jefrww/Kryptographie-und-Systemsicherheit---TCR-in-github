@@ -341,8 +341,9 @@ window.addEventListener('load', () => {
                         //     });
                         // });
                         getStage(childContract).then(function (stage){
+                            let voteValue
                             if(stage == 0){
-                                let voteValue = document.createElement("INPUT");
+                                voteValue = document.createElement("INPUT");
                                 voteValue.classList.add("voteInput");
                                 voteValue.type = "number";
                                 votingDiv.appendChild(voteValue);
@@ -394,33 +395,17 @@ window.addEventListener('load', () => {
                                     })
                                 });
                                 votingDiv.appendChild(payoutBtn);
+                                getRemainingTime(childContract).then(function (result){
+                                    console.log(result);
+                                    let remainingTime = document.createElement("DIV");
+                                    if(result/60/60/24>0) remainingTime.innerHTML = Math.ceil(result/60/60/24) + " Tage verbleibend.";
+                                    else if(result <= 0) remainingTime.innerHTML = "Abgelaufen.";
+                                    else remainingTime.innerHTML = Math.ceil(result/60/60%24) + " Stunden verbleibend.";
+                                    votingDiv.appendChild(remainingTime)
+                                });
                             }
                         })
 
-
-
-
-                        // getOwner(childContract).then(function (result){
-                        //     console.log(result);
-                        //     let ownerName = document.createElement("DIV");
-                        //     ownerName.innerHTML = "Owner: " + result;
-                        //     votingDiv.appendChild(ownerName);
-                        // });
-                        // getCreationDate(childContract).then(function (result){
-                        //     console.log(result);
-                        //     let creationDate = document.createElement("DIV");
-                        //     let date = new Date(result*1000);
-                        //     creationDate.innerHTML = "Created: " + date.toLocaleString();
-                        //     votingDiv.appendChild(creationDate);
-                        // });
-                        getRemainingTime(childContract).then(function (result){
-                            console.log(result);
-                            let remainingTime = document.createElement("DIV");
-                            if(result/60/60/24>0) remainingTime.innerHTML = Math.ceil(result/60/60/24) + " Tage verbleibend.";
-                            else if(result <= 0) remainingTime.innerHTML = "Abgelaufen.";
-                            else remainingTime.innerHTML = Math.ceil(result/60/60%24) + " Stunden verbleibend.";
-                            votingDiv.appendChild(remainingTime)
-                        });
                     }
 
                 });
