@@ -1,24 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <style>
-    button {
-      height: auto;
-      width: auto;
-      outline: none;
-    }
-  </style>
+  <link rel="stylesheet" href="popupStyles.css">
 </head>
 <body>
 
-<input id="wallet_address" type="text" placeholder="wallet address here"></input>
-<input id="wallet_private_key" type="text" placeholder="wallet private key"></input>
-<input id="wallet_count" type="text" placeholder="wallet count"></input>
-<button id="wallet_saveButton">Save</button>
-<input id="current_wallet" type="text" placeholder="current wallet"></input>
-<button id="wallet_change">Select</button>
+<label for="current_wallet">Current Wallet:</label>
+<select class="custom-select" name="wallets" id="current_wallet"></select>
+
+<hr>
+
+<div>
+  <input id="wallet_address"  class="centeredInput" type="text" placeholder="wallet address here">
+  <input id="wallet_private_key" class="centeredInput" type="text" placeholder="wallet private key">
+</div>
+
+<div id="debugDiv">
+  <label for="debug"> Debugmode: </label>
+  <input id="debug" type="checkbox">
+</div>
+
+<div class="centered">
+  <button class="inputButton" id="wallet_saveButton">Save</button>
+  <button class="inputButton" id="clear">CLEAR</button>
+</div>
+
 
 
 <script src="popup.js"></script>
+<script src="dropdown.js"></script>
 </body>
 </html>

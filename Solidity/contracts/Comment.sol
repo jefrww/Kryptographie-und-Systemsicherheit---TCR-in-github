@@ -23,26 +23,41 @@ contract Comment {
     }
 
     constructor (address payable _creator) public payable{
-        totalUp = msg.value;
+        totalUp = 0;
         totalDown = 0;
         stage = Stage.INIT;
         creator = _creator;
         creationDate = block.timestamp;
 //        address(uint160(address(this))).transfer(msg.value);
-    }
-    function upvote() public payable{
-        require(!votes[msg.sender].exists, "You already voted");
-        require(stage == Stage.INIT, "Voting in wrong stage");
-        votesLUT.push(msg.sender);
-        votes[msg.sender] = Vote(true, Favor.UP, msg.value);
+        votesLUT.push(_creator);
+        votes[_creator] = Vote(true, Favor.UP, msg.value);
         totalUp += msg.value;
     }
-    function downvote() public payable{
-        require(!votes[msg.sender].exists, "You already voted");
+    function upvote() public payable{
         require(stage == Stage.INIT, "Voting in wrong stage");
-        votesLUT.push(msg.sender);
-        votes[msg.sender] = Vote(true, Favor.DOWN, msg.value);
-        totalDown += msg.value;
+        if(!votes[msg.sender].exists){
+            votesLUT.push(msg.sender);
+            votes[msg.sender] = Vote(true, Favor.UP, msg.value);
+            totalUp += msg.value;
+        }
+        else{
+            votes[msg.sender].stake += msg.value;
+            totalUp += msg.value;
+        }
+
+    }
+    function downvote() public payable{
+        require(stage == Stage.INIT, "Voting in wrong stage");
+        if(!votes[msg.sender].exists){
+            votesLUT.push(msg.sender);
+            votes[msg.sender] = Vote(true, Favor.DOWN, msg.value);
+            totalDown += msg.value;
+        }
+        else{
+            votes[msg.sender].stake += msg.value;
+            totalDown += msg.value;
+        }
+
     }
     function payoutSingleRecipient() public{
         require(stage == Stage.INIT, "Voting in wrong stage");
@@ -78,6 +93,9 @@ contract Comment {
     }
     function getCreationDate() external view returns (uint256){
         return creationDate;
+    }
+    function getStage() external view returns (Stage){
+        return stage;
     }
     function getRemainingTime() external returns (uint256){
         if(creationDate+initDuration-now <= 0){
